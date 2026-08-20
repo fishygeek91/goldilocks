@@ -1,0 +1,71 @@
+# 4. Advantage is not
+
+Exactness is free for every transpose-closed channel. Speed is not. The natural first conjecture after the G01 pilot — that the MH gap $\delta(\gamma)$ is monotone non-increasing in the dephasing rate for every target — is false. Noise really does create Goldilocks peaks in the walk’s own mixing. The peaks never lift the sampler above the envelope of the coherent quench and the trivial classical kernels. That is the envelope law: proved nowhere, pre-registered and tested on fifty fresh cells, and complementary to the worst-case unital bound of Orfi and Sels [PRA **110**, 052414 (2024)].
+
+## 4.1 A refuted monotonicity
+
+The G01 pilot ($n=6$, $\alpha\le 0.5$, $T\le 1$; Sec.~4.4) found $\delta(\gamma)$ monotone decreasing in all twelve cells. The sketch offered for that pattern treated the dephased kernel as a mixture and invoked a data-processing intuition: mixing kernels cannot beat their best member. Both halves of the sketch fail.
+
+**Lemma (mixture structure).** The window-averaged dephased proposal $q_\gamma$ produces an MH transition matrix that is an exact convex mixture $T_\gamma = \mathbb{E}_{t,\omega}[T_{t,\omega}]$, where $\omega$ is the Poisson($n\gamma$) phase-kick record, $T_{t,\omega}$ is the MH chain built from the kicked-unitary proposal $q_{t,\omega}(y|x) = |\langle y|W_{t,\omega}|x\rangle|^2$, and every member is reversible with respect to the same $\pi$.
+
+*Proof.* Each $q_{t,\omega}$ is symmetric (Theorem 2 applies realization-wise after symmetrizing over the time-reversal involution), so the Metropolis acceptance $a(y,x)=\min(1,\pi_y/\pi_x)$ is $q$-independent and the off-diagonal $T(y|x)=q(y|x)\,a(y,x)$ is linear in $q$. Averaging $q$ averages $T$ off-diagonal; the diagonal absorbs the rest. ∎
+
+**Obstruction 1.** For reversible chains sharing $\pi$, the Dirichlet form $\mathcal{E}_T(f)$ is linear in $T$, and $\delta(T)=\inf_f \mathcal{E}_T(f)/\mathrm{Var}_\pi(f)$ is an infimum of linear functionals — concave in $T$. Hence $\delta(\mathbb{E}[T]) \ge \mathbb{E}[\delta(T_\omega)]$: a mixture is at least as good as the average of its members and *can* beat its best member. The G01 intuition had the inequality backwards. Any true monotonicity would have to use the $\gamma$-structure of the mixture weights, not mixture-ness alone.
+
+**Obstruction 2.** Monotonicity would follow from Peskun ordering if $q_\gamma(y|x)$ were pointwise non-increasing in $\gamma$ for all $y\neq x$. It is not. At a destructive-interference zero of the coherent walk, $q_0(y|x)=0$, dephasing strictly *increases* the off-diagonal mass. That is the ENAQT mechanism, alive inside the proposal.
+
+The conjecture cannot even be posed at fixed quench time. Take $\alpha=1$ (pure mixer $H=\sum_i X_i$), uniform $\pi$, and $t=\pi$. Each qubit is an independent rotation with flip probability $\sin^2 t = 0$: the $\gamma=0$ chain is the identity and $\delta=0$. Any $\gamma>0$ gives a positive flip probability. Exact Lindblad at $n=2$ yields $\delta = 0,\, 0.145,\, 0.468,\, 0.807,\, 0.990,\, 0.894$ at $\gamma = 0,\, 0.05,\, 0.2,\, 0.5,\, 1,\, 3$. Noise helps enormously at fixed $t$, because time randomization is itself a dephasing-like resource and a fixed $t$ keeps interference zeros for noise to fill.
+
+## 4.2 The solvable corner
+
+The interesting counterexample is window-averaged. Set $\alpha=1$, uniform $\pi$, $n$ qubits, and a per-qubit dephasing rate $\gamma$. Each qubit is an independent telegraph-reversed rotation $\theta_i(t)=\int_0^t \sigma_i(s)\,ds$ with $\sigma_i=\pm 1$ flipping at rate $\gamma$. The flip probability is $p_\gamma(t)=(1-f_\gamma(t))/2$, where $f_\gamma(t)=\mathbb{E}[\cos 2\theta(t)]$ solves
+\begin{equation}
+  f'' + 2\gamma f' + 4f = 0,
+  \qquad
+  f(0)=1,\quad f'(0)=0,
+\end{equation}
+hence $f_\gamma(t) = e^{-\gamma t}[\cos\omega t + (\gamma/\omega)\sin\omega t]$ for $\gamma<2$ with $\omega=\sqrt{4-\gamma^2}$. The formula matches the exact Lindblad propagator to six decimals. Laplace transformation at $s=0$ gives the identity $\int_0^\infty f_\gamma(t)\,dt = \gamma/2$.
+
+Every kernel $P_t$, and its $t$-average, is diagonal in the parity basis $\chi_S$, with eigenvalues $\lambda_S = \mathbb{E}_t[f_\gamma(t)^{|S|}]$. Window-averaging over $t\in[0,T]$ splits odd and even moments. Magnetization modes ($|S|=1$) have $\mathbb{E}_t[f_0]\to 0$: time-averaging kills the odd moments, and $\mathbb{E}_t[f_\gamma]\approx \gamma/(2T)$ is small either way. Parity modes ($|S|=2$) have $\mathbb{E}_t[f_0^2] = \mathbb{E}_t[\cos^2 2t] \to 1/2$: time-averaging does *not* kill even moments of the coherent oscillation. With $\gamma>0$, $f_\gamma^2$ decays and $\mathbb{E}_t[f_\gamma^2]=O(1/T)\to 0$. Therefore $\delta(\gamma=0)=1/2$, while intermediate $\gamma$ reaches $\delta \approx 1 - \max(\gamma/(2T),\, O(1/T))$. The window-averaged gap has an interior maximum.
+
+Measured at $n=2$ on the window $t\Delta\in[0,20]$: $\delta = 0.505,\, 0.874,\, 0.952,\, 0.973,\, 0.923,\, 0.753$ at $\gamma = 0,\, 0.1,\, 0.3,\, 1,\, 3,\, 10$, matching the formula ($0.505\leftrightarrow 1/2$; $0.753\leftrightarrow 1-10/40$). Conjecture v1 is refuted. The peak $0.5\to 0.97$ is the number we claim for this corner.
+
+**Figure 2.** Solvable corner. (a) Telegraph correlator $f_\gamma(t)$ at representative $\gamma$. (b) Window-averaged gap $\delta(\gamma)$ on $t\in[0,20]$, with an inset of the parity-mode eigenvalues $|\lambda_{|S|=1}|$ versus $|\lambda_{|S|=2}|$. Time-averaging kills the odd sector; only genuine dephasing kills the even sector. Check-points match `docs/monotonicity.md` §5; the $n=2$ Lindblad propagator agrees with the formula to $8\times 10^{-16}$.
+
+Time randomization and dephasing are both phase randomizers. Time-averaging kills phases only linearly (odd moments). Coherent correlations that survive in even moments — parity observables — are killed only by genuine decoherence. Noise *can* help mixing, by destroying coherent structure that the time window cannot reach.
+
+That interior-optimum phenomenon is not ours. Kendon and Tregenna [PRA **67**, 042315 (2003)] found numerically that small decoherence enhances discrete-time walks on the line, cycle, and hypercube, with an optimal rate $p\cdot T \approx 2.6$–$5$. Fedichkin, Solenov, and Tamon [QIC **6**, 263 (2006)] gave an analytic interior optimum on cycles. On the hypercube itself, Alagic and Russell [PRA **72**, 062304 (2005)] identified a decoherence threshold for linear instantaneous mixing, and Drezgich *et al.* [QIC **9**, 856 (2009)] characterized continuous-time mixing versus Markovian decoherence rate and axis, with an optimal $\gamma/\Delta \approx 1$–$5$ obtained from the same non-interacting-qubit factorization used here. Richter [PRA **76**, 042306 (2007); NJP **9**, 072 (2007)] already framed decoherent walks as MCMC, for uniform targets and without a Metropolis filter. What is new in this corner is the exact window-averaged telegraph solution, the odd-versus-even-moment mechanism that separates Layden-style time randomization from genuine dephasing, and the embedding of that analysis inside an exact MH sampler. Prior hypercube results concern the walk’s own mixing to uniform.
+
+A finer scan on the e01 chain at $n=4$ reconciles the pilot with the corner. Interior peaks exist in every cell; their size is controlled by $\alpha$. At $\alpha=0.3$ and $0.5$ the bumps are $0$–$8\%$ over $\gamma=0$ — invisible on G01’s coarse grid at $n=6$, so the pilot’s “$12/12$ monotone” is correct for its cells and is not a law. At $\alpha=1.0$, in the corner’s neighborhood, peaks reach a factor of two (e.g. $T=0.3$: $\delta(0)=0.049\to\delta(0.3\Delta)=0.100$; $T=1.0$: $0.065\to 0.109$). In all fifteen cells the peak stayed below the best classical baseline (single-flip gap $0.17$–$0.25$; uniform-flip up to $0.55$ at high $T$). Noise helped the walk only where the walk was not worth using.
+
+## 4.3 The envelope law
+
+**Envelope law.** For every target/temperature cell,
+\begin{equation}
+  \max_{\gamma>0} \delta(\gamma)
+  \le
+  \max\bigl(\delta(\gamma=0),\; \delta_{\mathrm{SF}},\; \delta_{\mathrm{UF}}\bigr),
+\end{equation}
+where $\delta_{\mathrm{SF}}$ and $\delta_{\mathrm{UF}}$ are the exact gaps of Metropolized single-flip and uniform-flip. Equivalently: wherever the quantum kernel has an advantage, dephasing only erodes it; wherever dephasing helps, a classical kernel was already better.
+
+The law is not a theorem. A plausible route is that the dephased kernel lies in the convex hull of phase-kicked quench kernels, and that this hull’s gap envelope is attained on the boundary $\{\text{coherent quenches}\}\cup\{\text{Zeno/classical limit}\}$. That convex-hull conjecture is stated, not proved. The paper’s evidence is a pre-registered test, written after the theory pass and before any of the fifty runs [experiments/G05_monotonicity/PREREGISTRATION.md]. The registered statement includes a $1\%$ slack $\varepsilon=0.01$ for propagator discretization; a cell is an L1 violation if its peak exceeds $(1+\varepsilon)$ times the envelope, and a violation $\ge 5\%$ would have refuted the law.
+
+The test draws fifty cells from a seeded rng (master seed $20260818$): target class uniform on $\{\text{e01-chain},\,\text{SK},\,\text{RFIM}\}$ with a fresh instance, $n$ uniform on $\{4,5,6\}$, $T$ log-uniform on $[0.05,10]$, $\alpha$ uniform on $[0.05,1.0]$. The $\gamma$ grid is $\{0\}\cup\mathrm{logspace}(-2,2,9)$ in units of $\Delta_3$, the spectral width of $H$. The kernel is the same window-averaged family as G01 ($t\Delta_3\in[2,12]$, twelve time points). The metric is the exact MH gap versus the enumerated target.
+
+**Result.** The law holds in $49/50$ cells. One disclosed exception, cell 46, is a $+1.17\%$ instance-specific micro-bump. Interior peaks occur in $20/50$ cells — the nuance is generic. Four cells are advantage cells ($\delta(0)$ beats both classical baselines), all of them low-$T$ SK or RFIM with $\alpha\in[0.63,0.86]$ and $T\in[0.05,0.1]$; in those four, the $\gamma$-curve is monotone-eroding beyond $\gamma\approx 0.03\Delta$ (sub-$2\%$ instance-specific micro-bumps can occur below that). The median peak-to-envelope margin is $-72.5\%$. No cell approached the $5\%$ refutation threshold.
+
+Cell 46 is an SK instance (seed 46), $n=5$, $T=0.085$, $\alpha=0.63$ — itself an advantage cell (quench gap $0.0895$ versus single-flip $1.3\times 10^{-6}$). The curve is $0.0895,\, 0.0906,\, 0.0815,\, 0.0203$ at $\gamma/\Delta_3 = 0,\, 0.01,\, 0.0316,\, 0.1$, peaking at $\gamma=0.01\Delta_3$ with margin $+1.17\%$ over $\gamma=0$. A finer $\gamma$ grid maxes at $+1.65\%$ ($\gamma\approx 0.02\Delta_3$, twelve time points) and survives doubling the time-point count ($+1.2\%$ at twenty-four points): it is a real property of this instance, not discretization noise. A fresh SK instance (seed 146) at the identical $(n,T,\alpha)$ is purely monotone. The bump lives at $\gamma\sim 0.01$–$0.03\Delta_3$, three orders below the effect H1 needed, and it requires $\gamma$-control precision that makes it useless as a resource.
+
+**Figure 4.** Envelope law, fifty pre-registered G05 cells: peak$_{\gamma>0}\delta(\gamma)$ versus $\max(\delta(0),\delta_{\mathrm{SF}},\delta_{\mathrm{UF}})$. The diagonal is the law boundary. Cell 46 ($+1.17\%$) is marked; the inset is the margin histogram. Cell 19 is a sub-$\varepsilon$ $+0.087\%$ geometric crossing of the diagonal, not an L1 violation.
+
+Orfi and Sels prove that *any* unital quantum proposal — dephasing included — has no speedup over classical sampling on their marked-item worst case. That bound already covers our whole dephased family on their adversarial instance, against the uniform baseline. The envelope law is complementary: per-instance, family-wide, quantitative, on typical Ising/SK/RFIM cells, against the full baseline envelope, with $\gamma$-resolved erosion. Theirs is worst-case impossibility; ours is a typical-instance accounting.
+
+## 4.4 Advantage cells: the G01 picture
+
+The four G05 advantage cells are small-$n$ and sparse. The advantage *regime* — low $T$, a coherent quench that already beats single-flip, $\alpha\le 0.5$ — is the G01 pilot: $n=6$, e01-chain and SK, $T\in\{0.1,0.3,1.0\}$, $\alpha\in\{0.05,0.15,0.3,0.5\}$, window $t\Delta\in[2,12]$, exact gap versus $\gamma/\Delta_3\in\{0,0.03,0.1,0.3,1,3,10\}$. All twelve cells are monotone decreasing in $\gamma$. The E01-type quantum advantage over single-flip persists at low $T$ and is strictly eroded by dephasing; at $T=1$ the dephased walk falls below the classical baseline by $\gamma\approx 0.1\Delta$. Representative gaps: chain $T=0.1$, $\alpha=0.5$ goes $8.3\times 10^{-4}\to 1.4\times 10^{-4}\to 2.5\times 10^{-6}$ from $\gamma=0$ to $0.1\Delta$ to $\Delta$, against single-flip $3.9\times 10^{-9}$; SK $T=0.3$, $\alpha=0.5$ goes $4.5\times 10^{-2}\to 4.7\times 10^{-3}\to 1.4\times 10^{-4}$, against single-flip $4.9\times 10^{-4}$.
+
+An ESS confirmation over the pilot’s twenty-four $(T,\alpha)$ cells (both targets; $50\,\mathrm{k}$ steps $\times$ five seeds; split-$\hat R\le 1.05$ gating) agrees with the gap ordering wherever it is measurable. Of $216$ kernel-cells, $92$ are $\hat R$-gated — frozen or near-frozen chains at large $\gamma$, and the slow chains at $T=0.1$. Of the fourteen cells with at least three non-gated $\gamma$ points, Spearman $\rho(\mathrm{gap},\,\mathrm{ESS/step})>0.8$ in twelve and equals $1.0$ in nine. Zero cells show an interior ESS peak. No $\gamma>0$ beats $\max(\gamma=0,\,\text{classical})$ on ESS/step or ESS/sec. The one automated flag is a known advantage cell in which the *walk family* beats uniform-flip, as it should; within the family, ESS differences across $\gamma\in\{0,0.03,0.1\}$ lie inside one standard error.
+
+**Figure 3.** G01 $\gamma$-scan at $n=6$: exact MH gap versus $\gamma$ across $(T,\alpha)$ cells, with ESS/step overlaid only on $\hat R$-passable rows. Advantage cells show monotone erosion of the quench. *$T=0.1$ cells are gap-only (ESS unmeasurable at $50\,\mathrm{k}$ steps, $\hat R$-gated).*
+
+Peaks are common ($20/50$ in G05; every $n=4$ cell at fine resolution; the solvable corner). Useful peaks are nonexistent. In advantage cells, dephasing erodes the advantage beyond $\gamma\approx 0.03\Delta$. That is the second pillar, in the form a referee can try to break.

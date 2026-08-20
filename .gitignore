@@ -1,0 +1,67 @@
+# Local Python environment (recreate from pyproject.toml).
+gvenv/
+venv/
+.venv/
+env/
+
+# Bytecode, packaging, and test caches.
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.ipynb_checkpoints/
+
+# LaTeX intermediates. Rebuild paper/main.pdf from paper/main.tex.
+*.aux
+*.bbl
+*.blg
+*.bcf
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*-blx.bib
+*Notes.bib
+paper/main.pdf
+
+# Run logs (experiments and LaTeX). Keep *.csv and result markdown.
+*.log
+
+# OS and editor junk.
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*~
+*.bak
+*.swp
+*.swo
+
+# IDE settings (keep local).
+.idea/
+.vscode/
+
+# Secrets and local env files.
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+secrets.json
