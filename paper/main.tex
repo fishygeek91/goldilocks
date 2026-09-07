@@ -55,7 +55,15 @@ instance-specific exception; in every cell where the coherent quench
 already wins, dephasing erodes the win. The Metropolis filter is why
 environment-assisted transport does not transfer to sampling:
 delocalization broadens proposal energy, and the filter rejects the
-spread. Noise costs nothing and buys nothing.
+spread. Finally we test what the
+coherent quench's value actually is, against a fourteen-kernel
+exact-tier zoo: energy concentration alone does not predict advantage
+(informed local kernels concentrate best and mix worst), but
+concentration \emph{at Hamming distance} does, and an oracle that
+merely proposes uniformly from the target's energy shell matches or
+beats the quench everywhere --- a mechanism no cheap classical kernel
+we construct reproduces. Noise costs nothing and buys nothing; the
+quench's edge is global isoenergetic proposals.
 \end{abstract}
 
 \maketitle
@@ -111,7 +119,7 @@ advantage, dephasing erodes it; wherever dephasing helps the walk, a
 classical kernel was already better. Advantage is not free, and H1--H3
 die in that form. Noise costs nothing and buys nothing.
 
-We make four contributions.
+We make five contributions.
 
 \begin{enumerate}
 \item \emph{A characterization of exactness-preserving noise}
@@ -145,6 +153,20 @@ $\gamma\approx 0.03\Delta$. Orfi and Sels already rule out a worst-case
 unital speedup~\cite{OrfiSels2024}; our law is the per-instance,
 family-wide complement.
 
+\item \emph{The quench's mechanism, measured against its classical
+competition} (Secs.~\ref{sec:outlook} and~\ref{sec:outlook-test}). The
+scalar energy-concentration conjecture is refuted by a fourteen-kernel
+exact-tier zoo; concentration \emph{at Hamming distance} survives as the
+predictor; an oracle that merely proposes uniformly from the energy
+shell matches or beats the quench everywhere it is connected; and three
+classical routes to that shell are measured and fall short ---
+informed local kernels (monotonically in their informedness),
+two-replica isoenergetic cluster moves (never above the
+mixture-dilution floor), and de novo shell sampling by SAT and
+pseudo-Boolean solvers (a one-to-three-order wall-clock gap to the
+quench at low energy once the right solver is used, with the CNF route
+worse by a further one to three orders).
+
 \item \emph{A reusable benchmarking protocol} (Sec.~\ref{sec:protocol}).
 Kernels never see target log-probabilities; ESS per step and per second
 are both reported; split-$\hat R\le 1.05$ gates frozen chains; kill
@@ -157,9 +179,11 @@ Section~\ref{sec:setup} fixes notation. Section~\ref{sec:exactness} is
 exactness. Section~\ref{sec:advantage} is advantage.
 Section~\ref{sec:mechanism} is the mechanism that stops ENAQT from
 transferring to sampling --- the Metropolis filter, not a failure of
-delocalization. Section~\ref{sec:outlook} flags a forward-looking
-predictor, energy concentration, as a conjecture and not a result of
-this paper. Related work is collected in Sec.~\ref{sec:related} rather
+delocalization. Section~\ref{sec:outlook} states the forward-looking
+predictor, energy concentration, as a conjecture --- and then tests it
+on a fourteen-kernel exact-tier zoo (Sec.~\ref{sec:outlook-test}): the
+scalar fails, concentration \emph{at distance} holds, and a shell
+oracle shows the mechanism is sufficient. Related work is collected in Sec.~\ref{sec:related} rather
 than here; the short version is that we are the first channel-level
 classification of exactness for noisy walk proposals, and the first
 embedding of decohered-walk mixing results in an exact MH sampler with
@@ -963,12 +987,13 @@ envelope law runs. The Metropolis filter is precisely what flips the
 verdict: walk-versus-walk, uniform target, no filter, and noise can win;
 kernel-versus-envelope, Gibbs target, MH filter, and noise never does.
 
-Nothing in this section is a design rule for future kernels. The
+Nothing in this section is yet a design rule for future kernels. The
 observations fit a picture in which the quench's value is
 energy-conserving interference and dephasing spends that value. Whether
 a scalar ``energy concentration'' predicts advantage across kernels and
-targets is a conjecture, stated as such in Sec.~\ref{sec:outlook}, and
-is not claimed here.
+targets is stated as a conjecture in Sec.~\ref{sec:outlook} and then
+put to an exact-tier test in Sec.~\ref{sec:outlook-test}, where the
+scalar form fails and a concentration-at-distance refinement survives.
 
 \section{Benchmarking protocol}
 \label{sec:protocol}
@@ -1036,7 +1061,7 @@ promote a refuted conjecture --- is the method contribution. H2 and H3
 are moot as stated: no useful $\gamma^\ast$ exists, so a
 matching-condition study and a hardware-idle test do not proceed.
 
-\section{Outlook: energy concentration as a predictor}
+\section{Energy concentration as a predictor: conjecture, test, refinement}
 \label{sec:outlook}
 
 The observations of Secs.~\ref{sec:advantage} and~\ref{sec:mechanism}
@@ -1075,12 +1100,186 @@ acceptance $\min(1,e^{-\Delta E/T})$. Energy concentration $C(q)$ is a
 proposed predictor of advantage, not a theorem of this paper.}
 \end{figure}
 
-A next-project test is direct: compute $C(q)$ for the quench, the
-dephased family, single-flip, and uniform-flip across a draw of
-targets, and regress measured ESS (or gap) advantage on $C$. If the
-regression is tight, $C$ becomes a design objective. If it is not, the
-mechanism of Sec.~\ref{sec:mechanism} is still the right qualitative
-story and the scalar is the wrong summary.
+\subsection{The test, executed: the scalar fails; a refined predictor
+holds}
+\label{sec:outlook-test}
+
+That test has now been run, on a kernel zoo wide enough to break the
+conjecture where it is breakable (run M01; data with the manuscript
+source). For fourteen exact-tier kernels --- the coherent quench;
+single-flip, add--delete--swap, and uniform-flip; a Creutz-demon
+microcanonical kernel~\cite{Creutz1983} at two demon temperatures;
+discrete Langevin proposals~\cite{Zhang2022DLP} at three
+informedness levels, including the uninformed random-mask limit; two
+``soft-spin'' variants that flip weak-local-field sites preferentially;
+and an oracle \emph{shell kernel}, uniform on
+$S_\varepsilon(x)=\{y\neq x: |E(y)-E(x)|\le\varepsilon\}$ with the
+$|S_\varepsilon|$ Hastings correction, at three widths --- we computed
+$C(q)$ ($\kappa=2$) and the exact MH gap on six all-to-all spin-glass
+instances with random fields ($n=8,10$; seeds 1--3) at
+$T\in\{1,0.3,0.1\}$: 18 cells, 252 kernel evaluations.
+
+The scalar conjecture fails. Across the eleven implementable kernels
+the per-cell Spearman correlation between $C(q)$ and the gap has median
+$\rho_s=-0.07$ (range $-0.70$ to $+0.97$ across the 18 cells). The
+counterexamples are systematic, not noise: informed local kernels ---
+discrete Langevin at full informedness, soft-spin at strong bias, the
+cold demon --- post the \emph{highest} energy concentrations in a cell
+while sitting up to ten orders of magnitude below the quench in gap.
+They concentrate energy the cheap way, by proposing single-site or
+downhill moves, and the same information that concentrates them makes
+them greedy and local. Figure~\ref{fig:cfar}(a) is that scatter.
+
+Two amendments repair the predictor, and both are dictated by the data
+rather than fitted to it. First, the window that matters is set by the
+coupling scale, not the temperature: quench and shell-oracle gaps are
+$T$-independent from $T=1$ to $T=0.1$ while a $\kappa T$ window empties.
+Second, concentration must be achieved \emph{at distance}. Define
+\begin{equation}
+  C_{\mathrm{far}}(q)
+  =
+  \sum_{d_H(x,y)\ge 3} \pi(x)\, q(y|x)\,
+  \mathbf{1}\bigl[\,|E(y)-E(x)| \le \varepsilon\,\bigr],
+  \label{eq:cfar}
+\end{equation}
+with $\varepsilon$ of order the coupling scale ($\varepsilon=2$ here,
+$J_{ij}\sim\mathcal N(0,1)$). The per-cell correlation jumps to median
+$\rho_s=+0.84$ (minimum $+0.26$), and the quench is the top-ranked
+implementable kernel by $C_{\mathrm{far}}$ in 16 of 18 cells (mean rank
+1.17) --- exactly where it is the top-ranked kernel by gap
+[Fig.~\ref{fig:cfar}(b)].
+
+The oracle closes the loop from correlation to mechanism. A kernel with
+\emph{only} the shell property --- uniform on $S_\varepsilon(x)$,
+knowing nothing about the walk, the mixer, or coherence --- matches or
+beats the quench gap on every instance at $\varepsilon\approx 2$--$4$
+(e.g.\ $n=10$, seed 3, $T=0.1$: shell $0.19$ vs.\ quench $0.045$; $n=8$,
+seed 1: $0.15$--$0.19$ vs.\ $0.085$--$0.090$), with the one caveat that
+$\varepsilon\lesssim 1$ can disconnect the state space (gap $0$;
+connectivity is a separate necessary condition the scalar does not see).
+The quench's value on these targets is that it \emph{is} an approximate
+global shell sampler.
+
+The qualitative half of this identification has antecedents in the
+qe-MCMC literature, and we flag them explicitly. Ferguson and
+Wallden~\cite{Ferguson2025} state, as the design heuristic behind
+their coarse-graining, that proposals which maximize Hamming distance
+while minimizing energy difference are the ones likely to be accepted,
+and engineer their scheme to retain both properties. Arai and
+Kadowaki~\cite{AraiKadowaki2025} measure exactly this signature ---
+large $d_H$ jointly with small $|\Delta E|$ --- for quantum-annealing
+proposals on spin glasses and identify it as the acceptance source.
+Cao \emph{et al.}~\cite{Cao2026} note in passing that the quench
+induces long-range transitions between near-degenerate states. What
+those works assert or observe qualitatively, the zoo makes
+quantitative and falsifiable: $C_{\mathrm{far}}$ is a measured
+predictor with a refuted scalar rival, and the oracle shows the shell
+property alone --- no interference, no mixer, no coherence ---
+suffices, which none of the antecedents constructs or tests.
+
+What no kernel in the zoo achieves is the conjunction cheaply. Local
+information buys concentration only at $d_H=1$, and adding more of it
+(discrete Langevin informedness, soft-spin bias, demon budget) moves
+kernels monotonically \emph{away} from the quench corner of
+Fig.~\ref{fig:cfar}(b). Distance without information (uniform,
+random-mask) forfeits concentration. Selecting shell candidates from
+random masks by multiple-try Metropolis~\cite{Liu2000MTM} matches the
+quench per accepted step in sampled runs but spends $2K-1=15$ target
+evaluations per step doing it.
+
+The classical literature approaches the conjunction from two
+directions outside our zoo, and neither closes it. Houdayer's
+isoenergetic cluster moves~\cite{Houdayer2001}, extended to arbitrary
+dimension by Zhu, Ochoa, and Katzgraber~\cite{Zhu2015ICM}, are
+$O(n)$, rejection-free, and global in Hamming distance --- but they
+conserve the joint energy of a replica \emph{pair} rather than the
+energy of the updated chain, propose only within the instantaneous
+two-replica overlap structure rather than uniformly on a shell, and
+degenerate as clusters percolate on dense frustrated graphs such as
+these. We have measured all three failure modes on the M01 instances
+(run M02, data with the manuscript source): on these all-to-all
+targets the faithful cluster move is exactly the replica swap --- a
+statistical no-op --- restricted clusters forfeit pair-energy
+conservation and post zero pair-Metropolis acceptance at $T=0.1$, the
+two-replica disagreement set is empty in $52$--$100\%$ of stationary
+draws at $T=0.1$, and mixing cluster moves into single-flip at equal
+weight never lifts the exact two-replica gap above the
+mixture-dilution floor ($0.50$--$0.51\times$ the single-flip pair
+baseline in every resolvable cell). The equi-energy sampler of Kou, Zhou, and
+Wong~\cite{Kou2006EE} jumps within energy rings at arbitrary Hamming
+distance --- statistics has wanted this oracle for two decades --- but
+draws its jump targets from stored past states of auxiliary
+higher-temperature chains, so shell samples are amortized from prior
+mixing, not generated fresh. Simulating the quench itself with
+matrix-product states, as Christmann \emph{et
+al.}~\cite{Christmann2024} propose, reaches the shell at polynomial
+but distinctly superlinear cost per proposal, with the reported
+advantage surviving even unconverged bond dimension.
+
+Whether a classical kernel can sample
+the energy shell at distance \emph{de novo} with $O(n)$--$O(n^2)$
+work per proposal is,
+after this test, the sharpest open question this program leaves; at
+$n\le 10$ nothing we constructed does, and the quench's per-proposal
+edge over the best implementable classical kernel in each cell runs
+from $1.8\times$ to $26\times$ in gap (median $11\times$), and the
+quench is the top-ranked kernel by gap in all 18 cells. (Per wall-clock second on present hardware that edge
+is inverted by four orders of magnitude of shot cost; the point here is
+mechanism, not deployment.)
+
+The oracle is nonetheless NP-cheap, and we have measured what that
+costs --- with one instructive false start. Encoding the shell as
+integer pseudo-Boolean constraints and sampling it with random parity
+constraints, in the style of hashing-based near-uniform SAT
+sampling~\cite{Gomes2006XOR,Ermon2012UAI,Chakraborty2014UniGen}, yields
+\emph{de novo} shell samples that agree exactly with enumeration on the
+integerized Hamiltonian and are empirically uniform (total variation
+$\le 0.03$ from uniform on every enumerable instance; run M03, data
+with the manuscript source). Along a temperature ladder at $n=20$ (run
+M05) the cost of this CNF-based route rises steeply with depth: shells
+around states equilibrated above $T_c$ ($\sim\!10^{5}$ members) sample
+in $\sim 10^{-1}$\,s, while below $T_c$ the shells shrink to
+$10^{3}$--$10^{0}$ members and CryptoMiniSat, UniGen, and ApproxMC all
+need $10^{2}$--$10^{3}$\,s or time out. That wall is largely an artifact
+of the CNF translation: a pseudo-Boolean solver that takes the energy
+window natively (Exact) enumerates the same deep shells in
+$10^{-1}$--$10^{1}$\,s, $10$--$3{,}500\times$ faster on identical
+states. The honest anchor is therefore this: the low-energy shell is
+reachable de novo, and with the right classical tool it costs
+$10^{-1}$--$10^{1}$\,s per shell at $n=20$ against $\sim 10^{-2}$\,s per
+quench proposal on hardware --- a one-to-three-order gap whose scaling
+with $n$ we have not measured with the native solver. Two facts
+survive tool choice: the deep shells the quench targets are tiny at
+this window, and every classical route to them has to \emph{decide}
+near-empty integer windows, which no cheap kernel of
+Fig.~\ref{fig:cfar} attempts at all.
+
+\noindent\textbf{Refined conjecture (concentration at distance).}
+Advantage over trivial kernels is predicted by
+$C_{\mathrm{far}}(q)$ --- proposal mass that is simultaneously
+near-degenerate at the coupling scale and long-range --- subject to
+shell connectivity. The scalar $C(q)$ alone is refuted as a design
+objective by the informed-local counterexamples above.
+
+\begin{figure*}
+\includegraphics[width=\linewidth]{figures/fig6_concentration_at_distance.pdf}
+\caption{\label{fig:cfar}
+The Sec.~\ref{sec:outlook} test, executed (M01: 14 kernels $\times$ 6
+spin-glass instances, $n=8,10$ $\times$ $T\in\{1,0.3,0.1\}$; exact MH
+spectral gap throughout; gaps and concentrations clipped at
+$10^{-12}$ and $10^{-4}$ for display).
+(a)~The C8 scalar: energy concentration $C(q)$ with window $2T$ against
+the exact gap, implementable kernels only. Median per-cell Spearman
+$\rho_s=-0.07$: concentration alone does not predict advantage, and the
+informed local kernels (triangles) occupy the high-$C$, low-gap corner.
+(b)~Concentration at distance [Eq.~\eqref{eq:cfar}]: median per-cell
+$\rho_s=+0.84$, the quench (stars) is top-ranked by $C_{\mathrm{far}}$
+in 16 of 18 cells, and the shell oracle (open diamonds) --- uniform on
+the energy shell, no quantum structure at all --- matches or beats the
+quench everywhere it is connected. Bottom-right diamonds are
+disconnected small-$\varepsilon$ shells: connectivity is a separate
+necessary condition.}
+\end{figure*}
 
 Three escapes from G01 were not pursued, and we do not want them read as
 hidden rescues of H1. Site-dependent rates $\gamma_i$ could \emph{shape}
@@ -1179,6 +1378,17 @@ effect of noise ``has not been investigated.'' The quantum-inspired
 surrogate of Christmann \emph{et al.}~\cite{Christmann2024} repeats the
 noise-affects-only-efficiency point without a $\gamma$ scan. The
 causal-set application~\cite{Ferguson2025causal} has no noise angle.
+On the mechanism side the same line contains the qualitative
+antecedents of Sec.~\ref{sec:outlook-test}, discussed there: the
+coarse-graining of Ref.~\cite{Ferguson2025} is engineered around
+large-$d_H$, small-$|\Delta E|$ proposals; Arai and
+Kadowaki~\cite{AraiKadowaki2025} observe that signature in
+quantum-annealing proposals; Cao \emph{et al.}~\cite{Cao2026} note
+long-range near-degenerate transitions while pursuing irreversible
+variants. Relative to all three, what is new in
+Sec.~\ref{sec:outlook-test} is the oracle-sufficiency test, the
+quantitative predictor with its refuted rival, and the classical
+no-go evidence.
 
 Fault-tolerant Metropolis walks are a different machine model: the walk
 \emph{is} the chain, not a noisy proposal inside classical MH. We cite
@@ -1206,11 +1416,36 @@ biased, with no exactness layer.
 
 \subsection{Positioning}
 
+A fourth neighborhood enters through
+Sec.~\ref{sec:outlook-test}: informed proposals for discrete
+distributions. Locally balanced proposals~\cite{Zanella2020},
+Gibbs-with-gradients~\cite{Grathwohl2021}, and discrete Langevin
+proposals~\cite{Zhang2022DLP} use local energy differences to shape
+single- and multi-site flips; multiple-try Metropolis~\cite{Liu2000MTM}
+selects among candidate sets; Creutz's demon~\cite{Creutz1983} is the
+deterministic microcanonical ancestor of energy-conserving moves.
+Isoenergetic cluster moves~\cite{Houdayer2001,Zhu2015ICM} and
+equi-energy jumps~\cite{Kou2006EE} are the classical moves closest to
+the shell mechanism itself; Sec.~\ref{sec:outlook-test} records why
+neither supplies the cheap de-novo shell generator the open question
+asks for. These
+methods are state of the art for the contests they were built for. Our
+zoo result places them relative to the quench on cold rugged targets:
+their local information buys energy concentration only at Hamming
+distance one, which is precisely the corner of
+Fig.~\ref{fig:cfar} the Metropolis filter does not reward.
+
 What is ours: the first channel-level exactness characterization for
 noisy walk proposals, upgrading Layden's SM condition to a
 classification; the first study of decohered-walk \emph{mixing} results
-embedded in an exact MH sampler with Gibbs targets; and the envelope law
-as the negative answer to noise-as-resource for \emph{sampling}. The
+embedded in an exact MH sampler with Gibbs targets; the envelope law
+as the negative answer to noise-as-resource for \emph{sampling}; and
+the oracle-sufficiency demonstration that shell sampling alone
+reproduces the coherent quench's edge --- sharpening the qualitative
+large-$d_H$/small-$|\Delta E|$ picture already present in the qe-MCMC
+literature~\cite{Ferguson2025,AraiKadowaki2025,Cao2026} --- with the
+concentration-at-distance predictor and the classical no-go evidence
+of the kernel zoo. The
 interior-optimum mixing phenomenon itself is 2003--2009 walk literature
 and is cited as such. The Metropolis filter is what separates the
 verdicts. Walk-versus-walk, uniform target, no filter: noise can win.
@@ -1227,8 +1462,21 @@ numerical results that support the claims of this paper are included
 with the manuscript source: the R1 and $T_1$-bias runners and tests
 I10--I13; the figure generators under \texttt{paper/figures/}; the G05
 pre-registration, \texttt{results.csv}, and verdict; the G01 ESS
-confirmation table; and the certified R1 and amplitude-damping result
-files. A public archival deposit will be made at submission
+confirmation table; the certified R1 and amplitude-damping result
+files; and the M01 kernel-zoo table
+(\texttt{paper/figures/data/m01\_cfar\_full.csv}, generated by
+\texttt{tunnelvision/experiments/D01\_demon/}, which also carries the
+demon, multiple-try, discrete-Langevin, and shell-oracle
+implementations with their exactness tests, and the M02
+isoenergetic-cluster measurements
+(\texttt{m02a\_icm\_cfar.csv}, \texttt{m02b\_icm\_gap.csv}) with
+the two-replica kernel and its certification tests; the M03 SAT-shell
+sampler, its pre-registered gates, and its uniformity and wall-clock
+tables live in \texttt{tunnelvision/experiments/M03\_shellhash/}; the
+M05 temperature-ladder and pseudo-Boolean-solver comparison in
+\texttt{tunnelvision/experiments/M05\_depth/}, whose results doc also
+records a state-generator bug that invalidated the depth attribution
+of the earlier M03/M04 ``cold'' timings). A public archival deposit will be made at submission
 (TODO: ZENODO-DOI).
 
 \bibliography{refs}
