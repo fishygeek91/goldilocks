@@ -163,9 +163,10 @@ classical routes to that shell are measured and fall short ---
 informed local kernels (monotonically in their informedness),
 two-replica isoenergetic cluster moves (never above the
 mixture-dilution floor), and de novo shell sampling by SAT and
-pseudo-Boolean solvers (a one-to-three-order wall-clock gap to the
-quench at low energy once the right solver is used, with the CNF route
-worse by a further one to three orders).
+pseudo-Boolean solvers (a wall-clock gap to the quench that grows from
+about three orders at $n=16$--$20$ to at least four and a half by
+$n=24$, because an exact proposal must certify a near-empty energy
+window complete).
 
 \item \emph{A reusable benchmarking protocol} (Sec.~\ref{sec:protocol}).
 Kernels never see target log-probabilities; ESS per step and per second
@@ -1244,15 +1245,22 @@ need $10^{2}$--$10^{3}$\,s or time out. That wall is largely an artifact
 of the CNF translation: a pseudo-Boolean solver that takes the energy
 window natively (Exact) enumerates the same deep shells in
 $10^{-1}$--$10^{1}$\,s, $10$--$3{,}500\times$ faster on identical
-states. The honest anchor is therefore this: the low-energy shell is
-reachable de novo, and with the right classical tool it costs
-$10^{-1}$--$10^{1}$\,s per shell at $n=20$ against $\sim 10^{-2}$\,s per
-quench proposal on hardware --- a one-to-three-order gap whose scaling
-with $n$ we have not measured with the native solver. Two facts
-survive tool choice: the deep shells the quench targets are tiny at
-this window, and every classical route to them has to \emph{decide}
-near-empty integer windows, which no cheap kernel of
-Fig.~\ref{fig:cfar} attempts at all.
+states. Finding members is not the expensive part; an \emph{exact} proposal
+must also certify that no further member exists (for the
+$|S_\varepsilon(x)|/|S_\varepsilon(y)|$ Hastings ratio, or to draw
+uniformly), and that completeness proof is what scales. With the native
+solver and correctly equilibrated low-energy states (run M06), an
+exactly uniform deep-shell proposal costs $1$--$4$\,s at $n=16$,
+$30$--$50$\,s at $n=20$, and is censored at our $300$\,s per-call
+timeout in eleven of twelve deep cells at $n=24$--$32$ --- growth of at
+least an order of magnitude per four spins --- against $\sim 10^{-2}$\,s
+per quench proposal on hardware, flat in $n$ at these sizes. The gap is
+therefore three and a half orders at $n=20$ and at least four and a
+half, widening, from $n=24$. Two facts survive tool choice: the deep
+shells the quench targets are tiny at this window, and every classical
+route to them has to \emph{decide} near-empty integer windows --- a
+completeness proof a physical sampler never has to produce, and one that
+no cheap kernel of Fig.~\ref{fig:cfar} attempts at all.
 
 \noindent\textbf{Refined conjecture (concentration at distance).}
 Advantage over trivial kernels is predicted by
@@ -1476,7 +1484,8 @@ tables live in \texttt{tunnelvision/experiments/M03\_shellhash/}; the
 M05 temperature-ladder and pseudo-Boolean-solver comparison in
 \texttt{tunnelvision/experiments/M05\_depth/}, whose results doc also
 records a state-generator bug that invalidated the depth attribution
-of the earlier M03/M04 ``cold'' timings). A public archival deposit will be made at submission
+of the earlier M03/M04 ``cold'' timings; and the M06 native-solver
+scan in \texttt{tunnelvision/experiments/M06\_pbnative/}). A public archival deposit will be made at submission
 (TODO: ZENODO-DOI).
 
 \bibliography{refs}
