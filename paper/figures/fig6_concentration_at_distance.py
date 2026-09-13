@@ -88,7 +88,7 @@ def main() -> None:
     axes[0].set_ylabel(r"exact MH spectral gap $\delta$")
     axes[0].set_title("(a) concentration alone", loc="left")
     axes[1].set_title("(b) concentration at distance", loc="left")
-    axes[1].legend(loc="center left", bbox_to_anchor=(0.02, 0.32), frameon=False, fontsize=6.5, handletextpad=0.2)
+    axes[1].legend(loc="center left", bbox_to_anchor=(0.085, 0.32), frameon=True, framealpha=1.0, facecolor="white", edgecolor="none", fontsize=6.5, handletextpad=0.2)
     axes[1].annotate("disconnected shells\n($\\varepsilon$ too small)", xy=(0.30, GAP_FLOOR*1.5), fontsize=6.5,
                      color=OKABE_ITO["green"], ha="center", va="bottom")
 

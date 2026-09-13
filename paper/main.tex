@@ -24,8 +24,8 @@
 \title{Noise cannot help quantum-enhanced MCMC: exactness is free, advantage is not}
 
 \author{Darth Kuvius}
-\affiliation{TODO: affiliation}
-\email[]{TODO: corresponding-author email}
+\affiliation{Independent researcher, Pinedale, Wyoming, USA}
+\email[]{fishygeek91@gmail.com}
 
 \date{\today}
 
@@ -62,7 +62,10 @@ exact-tier zoo: energy concentration alone does not predict advantage
 concentration \emph{at Hamming distance} does, and an oracle that
 merely proposes uniformly from the target's energy shell matches or
 beats the quench everywhere --- a mechanism no cheap classical kernel
-we construct reproduces. Noise costs nothing and buys nothing; the
+we construct reproduces, and whose exact classical emulation pays a
+measured certification cost of at least one order of magnitude every
+four spins, because an exact shell proposal must certify a near-empty
+energy window complete --- a proof a physical sampler never performs. Noise costs nothing and buys nothing; the
 quench's edge is global isoenergetic proposals.
 \end{abstract}
 
@@ -1460,7 +1463,14 @@ verdicts. Walk-versus-walk, uniform target, no filter: noise can win.
 Kernel-versus-envelope, Gibbs target, MH filter: noise never wins.
 
 \begin{acknowledgments}
-TODO: acknowledgments.
+This work was carried out independently, without external funding.
+The author developed the theory, experiments, and manuscript with
+substantial assistance from Anthropic's Claude models, used under the
+author's direction for literature search, derivation checking, code
+generation, and drafting. All quantitative claims are backed by the
+certification scripts and pre-registered locks distributed with the
+manuscript source, and were verified by rerunning them; any remaining
+errors are the author's own.
 \end{acknowledgments}
 
 \section*{Data availability}
