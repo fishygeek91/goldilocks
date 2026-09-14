@@ -65,7 +65,13 @@ beats the quench everywhere --- a mechanism no cheap classical kernel
 we construct reproduces, and whose exact classical emulation pays a
 measured certification cost of at least one order of magnitude every
 four spins, because an exact shell proposal must certify a near-empty
-energy window complete --- a proof a physical sampler never performs. Noise costs nothing and buys nothing; the
+energy window complete --- a proof a physical sampler never performs.
+That asymmetry generalizes: a conserved diagonal charge confines every
+measured outcome to its symmetry sector while preserving evaluation-free
+exactness within it, a feasibility certificate priced at zero; but a
+pre-registered race of the amortized architecture this suggests ---
+device-mined proposal libraries consumed by exact mode-jumping ---
+is killed by its own criteria, classically. Noise costs nothing and buys nothing; the
 quench's edge is global isoenergetic proposals.
 \end{abstract}
 
@@ -122,7 +128,7 @@ advantage, dephasing erodes it; wherever dephasing helps the walk, a
 classical kernel was already better. Advantage is not free, and H1--H3
 die in that form. Noise costs nothing and buys nothing.
 
-We make five contributions.
+We make six contributions.
 
 \begin{enumerate}
 \item \emph{A characterization of exactness-preserving noise}
@@ -177,6 +183,26 @@ are both reported; split-$\hat R\le 1.05$ gates frozen chains; kill
 criteria are written before data; negative results are reported at full
 strength. The protocol killed H1 on the G01 pilot and then caught the
 overreach of conjecture v1, forcing the G05 pre-registration.
+
+\item \emph{Extraction pricing as a design rule, with a free-certificate
+theorem and a registered negative} (Secs.~\ref{sec:exactness-sectors}
+and~\ref{sec:extraction}). Devices charge per measured shot
+($10^{2}$--$10^{4}$\,s$^{-1}$) while classical samplers execute
+$10^{6}$--$10^{8}$ proposals per second, so any hybrid that consumes
+device output per MCMC step starts $10^{4}$--$10^{6}\times$ behind on
+targets whose $\pi$-evaluation is cheap relative to shot latency. What
+noisy hardware does give away is invariants: a conserved diagonal
+charge confines every outcome to its symmetry sector (a feasibility
+certificate at zero cost, Theorem~\ref{thm:sector}) while preserving
+the evaluation-free symmetry of Sec.~\ref{sec:exactness} within each
+sector. We tested the one architecture that takes the device off the
+per-step path --- a fixed atom library mined offline, consumed by exact
+mode-jumping proposals --- under pre-registered kill criteria (run
+P01), and both kills fired: classical miners matched the simulated
+quench's mode coverage in every cell at matched budget, and the darting
+gain never reached $2\times$ over parallel tempering on
+metastability-screened targets at $n=50$--$200$. The negative is
+reported at full strength.
 \end{enumerate}
 
 Section~\ref{sec:setup} fixes notation. Section~\ref{sec:exactness} is
@@ -646,6 +672,62 @@ the numbers do --- not $\varepsilon \lesssim \eta\,\delta\,\pi_{\min}$,
 what the envelope says. If that is too tight for the device's $T_1$,
 estimate the $q$-ratio and run Hastings.
 
+\subsection{Free certificates from conserved charges}
+\label{sec:exactness-sectors}
+
+The exactness results above have a feasibility-side companion. Let
+$q:\{0,1\}^n\to\mathbb{R}$ be a classical constraint function and
+$Q=\sum_x q(x)|x\rangle\!\langle x|$ the corresponding diagonal charge, so
+that each $Q$-eigenspace is spanned by computational-basis states.
+
+\begin{theorem}[Sector support]\label{thm:sector}
+Prepare $|x\rangle$, apply any finite composition of unitaries $U$ with
+$[U,Q]=0$ and CPTP maps whose every Kraus operator commutes with $Q$,
+and measure in the computational basis. Then every outcome $y$
+satisfies $q(y)=q(x)$ with probability 1, at any depth, evolution time,
+and system size. If additionally the hypotheses of
+Theorem~\ref{thm:lindblad} hold (real symmetric $H$, transpose-closed
+jumps), the proposal is symmetric \emph{within every sector
+simultaneously}, hence a valid $\log q\equiv 0$ MH proposal for any
+target restricted to the start sector.
+\end{theorem}
+
+The proof is commutant algebra plus the time-reversed unravelling of
+Theorem~\ref{thm:lindblad}, sector-restricted; commuting operators are
+block-diagonal across $Q$-eigenspaces, so sector membership is
+preserved by induction over the composition, and the symmetry argument
+is unchanged (proof and a machine certification --- $n=6$ number-conserving
+XY dynamics with diagonal disorder under full-Lindblad dephasing;
+cross-sector leakage exactly zero, symmetry defect
+$1.9\times 10^{-16}$ --- are distributed with the manuscript source).
+Two readings matter here. First, every diagonal jump operator commutes
+with \emph{every} diagonal $Q$, so computational-basis dephasing ---
+the dominant channel, and the free one by Theorem~\ref{thm:lindblad}
+--- is automatically sector-preserving: for diagonal charges, dephasing
+costs neither exactness nor feasibility. Second, the theorem prices at
+zero exactly what Sec.~\ref{sec:outlook-test} measures as the scaling
+cost of every classical route to the energy shell: a classical exact
+proposal must \emph{certify} its constraint set (the completeness
+proofs censored at $n\ge 24$), while conserving dynamics cannot leave
+it. The ingredients are individually standard --- decoherence-free
+subspaces~\cite{Lidar1998}, symmetry-verification error
+mitigation~\cite{BonetMonroig2018}, conserving drivers for constrained
+annealing and QAOA~\cite{HenSpedalieri2016,Hadfield2019} --- but they
+have been used to protect or mitigate an output-priced computation;
+here the sector \emph{is} the encoding, for sampling, inside an exact
+MH boundary. Hamming-weight sectors are the natural hardware
+instantiation (XY/iSWAP gate sets conserve particle number exactly).
+What the theorem does not give: any statement under amplitude damping.
+Discarding sector-violating shots (a classical $O(n^2)$ check per
+shot) restores the support guarantee by fiat, and we conjecture it
+also preserves proposal symmetry --- but the discard probability is
+state-dependent for exactly the reason $T_1$ breaks
+Theorem~\ref{thm:tc}, so this remains a conjecture, not a corollary,
+and we do not use it. Fair sampling \emph{within} a sector is likewise
+not implied (annealers are measurably unfair samplers of degenerate
+sets~\cite{Konz2019}); it is an empirical question, and
+Sec.~\ref{sec:extraction} is what measuring it honestly looks like.
+
 \section{Advantage is not}
 \label{sec:advantage}
 
@@ -1065,6 +1147,74 @@ promote a refuted conjecture --- is the method contribution. H2 and H3
 are moot as stated: no useful $\gamma^\ast$ exists, so a
 matching-condition study and a hardware-idle test do not proceed.
 
+\subsection{Extraction pricing, and an amortized architecture killed by
+its own registration (run P01)}
+\label{sec:extraction}
+
+The two-clocks rule has a hardware-side sharpening. Present devices
+deliver $10^{2}$--$10^{4}$ useful shots per second; a classical sampler
+executes $10^{6}$--$10^{8}$ proposals per second. A hybrid that
+consumes one device shot per MCMC step therefore pays a
+$10^{4}$--$10^{6}\times$ throughput tax before any per-proposal quality
+enters, while the measured per-proposal edge of the best quantum kernel
+in our zoo is $1.8$--$26\times$ (Sec.~\ref{sec:outlook-test}). On any
+target whose $\pi$-evaluation is cheap relative to shot latency
+($\sim\!10^{-2}$\,s) --- the scope matters: an expensive-$\pi$ target
+would make per-evaluation and wall-clock currency coincide --- no
+per-step-device hybrid can show an honest ESS-per-second advantage
+until shot rates improve by roughly three orders of magnitude. This is
+the general I/O argument of Hoefler \emph{et
+al.}~\cite{Hoefler2023} applied as a design selection rule for
+sampling, and recent per-step proposals~\cite{AraiKadowaki2025,Lin2025}
+report spectral-gap or per-step gains with no wall-clock metric ---
+precisely the accounting the protocol above forbids. We suggest
+benchmarks report, alongside the two clocks, the extraction cost
+$B_{\mathrm{ext}} = \text{device shots consumed}/\text{ESS}$.
+
+One architecture escapes the tax structurally: pay the device
+\emph{once}, offline, to mine a fixed library of low-energy ``atom''
+states, then run a purely classical exact chain whose mixture kernel
+darts into the frozen library (Tjelmeland--Hegstad mode
+jumping~\cite{Tjelmeland2001}; precomputed-library darting is classical
+prior art in continuous spaces~\cite{Andricioaei2001,Sminchisescu2011}
+and per-step-optimization variants exist for discrete
+ones~\cite{Hubin2018}). The device cost amortizes; $B_{\mathrm{ext}}$
+falls with chain length. We raced this architecture under
+pre-registration (run P01, protocol and data with the manuscript
+source), with two kill criteria fixed before any run: K1, classical
+miners (solver member-enumeration without completeness proofs,
+parallel-tempering restarts, greedy descent with kicks) match the
+simulated quench miner's mode coverage at matched builder wall-clock
+--- quantum arm dead; K2, darting gain below $2\times$ over a
+parallel-tempering baseline on targets pre-screened for measured
+classical metastability --- architecture dead on this class. A
+portal-acceptance gate (energy-matched atoms must accept at
+$\gtrsim 0.2$) passed at $n\le 20$, so the race ran.
+
+Both kills fired. At $n\le 20$ against enumerated truth, the best
+classical miner matched or beat the quench miner's mass-weighted mode
+coverage in $24$ of $24$ cells at $n\ge 16$ --- with the quench arm
+overrunning its builder budget $3$--$50\times$ (one statevector
+evolution at $n=20$ costs $30$--$100$\,s). At $n=50$--$200$, six of
+twelve cells survived the metastability screen (the others mix under
+plain single-flip MH --- racing there would manufacture a trivial K2
+failure), and on the survivors the darting gain was $0.46$--$1.75\times$,
+never $2\times$, with two measured mechanisms: solver member-finding
+collapses from hundreds of atoms to $1$--$3$ per 30-second budget on
+dense instances at $n\ge 50$ (bounding the scale reach of the
+member-finding speed reported in Sec.~\ref{sec:outlook-test}), and
+portal acceptance falls to $\lesssim 0.01$ because energy matching at
+$\delta E \lesssim T$ does not transfer upward in $n$. Whether quantum
+hardware would out-mine classical miners at $n\ge 50$ is not decidable
+in simulation (statevector caps near $n=28$; tensor-network truncation
+corrupts the shell physics being measured) and we make no claim either
+way. The architecture that structurally escapes the extraction tax
+therefore fails on dense spin glasses for classical reasons ---
+which is the benchmark working as designed: the registered negative,
+its screen, and $B_{\mathrm{ext}}$ are reusable as protocol pieces,
+and offline-batch device reuse remains live only where the consumer
+is an estimator rather than a chain~\cite{Camino2025}.
+
 \section{Energy concentration as a predictor: conjecture, test, refinement}
 \label{sec:outlook}
 
@@ -1251,7 +1401,10 @@ $10^{-1}$--$10^{1}$\,s, $10$--$3{,}500\times$ faster on identical
 states. Finding members is not the expensive part; an \emph{exact} proposal
 must also certify that no further member exists (for the
 $|S_\varepsilon(x)|/|S_\varepsilon(y)|$ Hastings ratio, or to draw
-uniformly), and that completeness proof is what scales. With the native
+uniformly), and that completeness proof is what scales. (Member-finding
+being cheap is itself a bounded claim: it is measured here at
+$n\le 32$, and run P01 finds it fails by $n=50$ on dense instances at
+this window --- Sec.~\ref{sec:extraction}.) With the native
 solver and correctly equilibrated low-energy states (run M06), an
 exactly uniform deep-shell proposal costs $1$--$4$\,s at $n=16$,
 $30$--$50$\,s at $n=20$, and is censored at our $300$\,s per-call
@@ -1500,7 +1653,11 @@ M05 temperature-ladder and pseudo-Boolean-solver comparison in
 \texttt{tunnelvision/experiments/M05\_depth/}, whose results doc also
 records a state-generator bug that invalidated the depth attribution
 of the earlier M03/M04 ``cold'' timings; and the M06 native-solver
-scan in \texttt{tunnelvision/experiments/M06\_pbnative/}). A public archival deposit will be made at submission
+scan in \texttt{tunnelvision/experiments/M06\_pbnative/}; the P01
+pre-registration, miner race, and results in
+\texttt{tunnelvision/experiments/P01\_portal/}; and the sector-support
+proof note and its Lindblad certification script in
+\texttt{tunnelvision/docs/}). A public archival deposit will be made at submission
 (TODO: ZENODO-DOI).
 
 \bibliography{refs}
