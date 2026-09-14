@@ -2,7 +2,7 @@
   "title": "Noise cannot help quantum-enhanced MCMC: exactness is free, advantage is not",
   "description": "<p>Manuscript, certification scripts, figure generators, pre-registrations, and numerical results for the Goldilocks study of noise in quantum-enhanced Markov-chain Monte Carlo. We classify the noise channels that preserve the sampler's exactness (transpose-closed Kraus sets; Lindblad extension), bound the bias of amplitude damping, refute gap-monotonicity, establish the pre-registered envelope law (noise never beats the best of the coherent quench and trivial classical kernels; 49/50 cells, one disclosed exception), and measure the quench's mechanism against a fourteen-kernel exact-tier zoo: concentration at Hamming distance predicts advantage, a shell oracle suffices, and exact classical emulation pays a certification cost growing at least one order of magnitude per four spins. Companion experiment code and data live in the tunnelvision repository archived alongside this deposit.</p>",
   "creators": [
-    {"name": "Kuvius, Darth"}
+    {"name": "Kovac, Dustin"}
   ],
   "upload_type": "publication",
   "publication_type": "preprint",
